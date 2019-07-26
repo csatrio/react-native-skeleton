@@ -39,9 +39,10 @@ function mapDrawerNavigator(navigationStructure) {
     const remappedNavigation = {};
     Object.keys(navigationStructure).forEach(key => {
         const stackNavigator = createStackNavigator(MainNavigationStack, {initialRouteName: key});
-        const {title, icon} = navigationStructure[key];
+        const {title, icon, iconType} = navigationStructure[key];
         const _title = typeof(title) === 'undefined' ? key : title;
         const iconName = typeof(icon) === 'undefined' ? 'play-arrow' : icon;
+        const _iconType = typeof(iconType) === 'undefined' ? 'material' : iconType;
         remappedNavigation[key] = {
             screen: stackNavigator,
             navigationOptions: {
@@ -54,7 +55,7 @@ function mapDrawerNavigator(navigationStructure) {
                             width: 30,
                             height: 30,
                         }}
-                        type="material"
+                        type={iconType}
                         color={tintColor}
                     />
                 ),

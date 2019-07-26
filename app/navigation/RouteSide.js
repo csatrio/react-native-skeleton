@@ -1,4 +1,4 @@
 export default {
-    Home: {title: 'Home'},
+    Home: {title: 'Home Screen', icon: 'home'},
     Demo2: {title: 'Demo 2 Screen'},
 };
