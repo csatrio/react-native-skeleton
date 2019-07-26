@@ -20,14 +20,22 @@ import {
     Header,
     Colors,
 } from 'react-native/Libraries/NewAppScreen';
+import {Card} from 'react-native-elements';
+import Grid from '../components/Grid';
 
 class Demo2 extends Component {
+    list = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+    gridRenderCb = (item, index) => {
+        return <Card key={index}><Text>{item}</Text></Card>;
+    };
 
     render() {
         return (
             <Fragment>
                 <StatusBar barStyle="dark-content"/>
                 <SafeAreaView>
+                    <Grid size={4} list={this.list} renderCallback={this.gridRenderCb}/>
                     <ScrollView
                         contentInsetAdjustmentBehavior="automatic"
                         style={styles.scrollView}>
