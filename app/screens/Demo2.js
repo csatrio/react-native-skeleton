@@ -20,14 +20,52 @@ import {
     Header,
     Colors,
 } from 'react-native/Libraries/NewAppScreen';
-import {Card} from 'react-native-elements';
+import {Card, Icon} from 'react-native-elements';
 import Grid from '../components/Grid';
 
+
+function pad(str, length){
+    const len = Math.round((length-str.length)/2)
+    const len2 = Math.ceil((length-str.length)/2)
+    const paddingLeft = Math.max(len, len2)
+    const paddingRight = Math.min(len, len2)
+    let _str = str
+
+    if(len > 0 && len2 > 0){
+        for (let i = 0; i < paddingLeft; i++) {
+            _str = ' ' + _str
+        }
+        for (let i = 0; i < paddingRight; i++) {
+            _str += ' '
+        }
+    }
+
+    return _str
+}
+
 class Demo2 extends Component {
-    list = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    list = [
+        {icon: 'search', content: 'search', to: 'Demo2'},
+        {icon: 'user', content: 'user', to: 'Demo2'},
+        {icon: 'gear', content: 'gear', to: 'Demo2'},
+        {icon: 'heart', content: 'heart', to: 'Demo2'},
+        {icon: 'star', content: 'star', to: 'Demo2'},
+    ];
+    maxLength = 0
 
     gridRenderCb = (item, index) => {
-        return <Card key={index}><Text>{item}</Text></Card>;
+        const {icon, content, to} = item
+        if(this.maxLength === 0){
+            for (let i = 0; i <this.list.length ; i++) {
+                this.maxLength = Math.max(this.list[i].content.length, this.maxLength)
+            }
+        }
+        return (
+            <Card key={index} >
+                <Icon type='font-awesome' name={icon} onPress={()=>this.props.navigation.navigate(to)}/>
+                <Text>{pad(content, this.maxLength) +':'+ JSON.stringify(this.maxLength)}</Text>
+            </Card>
+        );
     };
 
     render() {
@@ -35,7 +73,9 @@ class Demo2 extends Component {
             <Fragment>
                 <StatusBar barStyle="dark-content"/>
                 <SafeAreaView>
-                    <Grid size={4} list={this.list} renderCallback={this.gridRenderCb}/>
+                    <View style={{marginBottom: 10}}>
+                        <Grid size={4} list={this.list} renderCallback={this.gridRenderCb}/>
+                    </View>
                     <ScrollView
                         contentInsetAdjustmentBehavior="automatic"
                         style={styles.scrollView}>
