@@ -1,10 +1,9 @@
 import {createAppContainer, createBottomTabNavigator} from 'react-navigation';
-import {ThemeProvider, Icon} from 'react-native-elements';
+import {Icon, ThemeProvider} from 'react-native-elements';
 import {Theme} from './configuration/index';
 import React from 'react';
-import {Provider} from 'mobx-react';
+import {inject, observer, Provider} from 'mobx-react';
 import Home from './screens/Home';
-import {inject, observer} from 'mobx-react';
 import stores from './store';
 
 const storeKeys = Object.keys(stores).map(key => key);

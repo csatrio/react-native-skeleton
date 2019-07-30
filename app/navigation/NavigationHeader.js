@@ -1,7 +1,7 @@
 import React from 'react';
-import {Header, Button, Icon} from 'react-native-elements';
-import {observer, inject} from 'mobx-react';
-import {StyleSheet, Platform} from 'react-native';
+import {Button, Header, Icon} from 'react-native-elements';
+import {inject, observer} from 'mobx-react';
+import {Platform, StyleSheet} from 'react-native';
 
 @inject('store')
 @observer
