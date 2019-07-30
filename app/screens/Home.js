@@ -27,12 +27,11 @@ class Home extends Component {
     state = {
         bannerItems: [],
         currentPage: 1,
-        msg: '',
     };
 
     gridList = [
         {label: 'Home', icon: 'home'},
-        {label: 'Gears', icon: 'gears', to: 'Home'},
+        {label: 'Gears', icon: 'gears', to: 'Category'},
         {label: 'Home', icon: 'home'},
         {label: 'Home', icon: 'home'},
         {label: 'Home', icon: 'home'},
@@ -86,6 +85,7 @@ class Home extends Component {
         const {icon, label, to, param} = item;
         const onPress = () => {
             if (notUndefined(to)) {
+                this.props.store.showDebug('onPress Grid')
                 this.props.navigation.navigate(to);
             }
         }
@@ -116,6 +116,15 @@ class Home extends Component {
 
                         <View>
                             <Text h4>Featured</Text>
+                            <InfiniteScrollView style={{...styles.scrollView}}
+                                                fetchAtDifference={10}
+                                                scrollCb={() => this.fetchBook(this.state.currentPage + 1)}
+                                                horizontal={true}
+                            >{this.state.bannerItems}</InfiniteScrollView>
+                        </View>
+
+                        <View>
+                            <Text h4>Terlaris</Text>
                             <InfiniteScrollView style={{...styles.scrollView}}
                                                 fetchAtDifference={10}
                                                 scrollCb={() => this.fetchBook(this.state.currentPage + 1)}

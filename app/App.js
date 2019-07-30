@@ -1,9 +1,11 @@
 import {createAppContainer, createBottomTabNavigator} from 'react-navigation';
-import {Icon, ThemeProvider} from 'react-native-elements';
+import {Icon, ThemeProvider, Overlay} from 'react-native-elements';
+import {View, Text} from 'react-native';
 import {Theme} from './configuration/index';
 import React from 'react';
 import {inject, observer, Provider} from 'mobx-react';
 import Home from './screens/Home';
+import Category from './screens/Category';
 import stores from './store';
 
 const storeKeys = Object.keys(stores).map(key => key);
@@ -29,7 +31,7 @@ const TabNavigator = createBottomTabNavigator(
             }),
         },
         Category: {
-            screen: Home,
+            screen: injectStore(Category),
             navigationOptions: (navProps) => ({
                 tabBarIcon: (props) => <TabIcon {...props} name='sitemap'/>,
                 tabBarLabel: 'Category',
@@ -58,8 +60,12 @@ const TabNavigator = createBottomTabNavigator(
 @observer
 export default class App extends React.Component {
     render() {
+        const store = stores.store
         return <Provider {...stores}>
             <ThemeProvider theme={Theme}>
+                <Overlay isVisible={store.debugVisible} onBackdropPress={() => store.closeDebug()}>
+                    <Text>{JSON.stringify(store.debugMsg)}</Text>
+                </Overlay>
                 {React.createElement(createAppContainer(TabNavigator))}
             </ThemeProvider>
         </Provider>;
