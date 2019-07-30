@@ -21,7 +21,7 @@ export default class NavigationHeader extends React.Component {
         const {title, isBack} = this.props;
         return <Header
             placement='center'
-            leftComponent={<Button icon={<Icon name={isBack ? 'chevron-left' : 'apps'} type='material'/>}
+            leftComponent={<Button icon={<Icon name={isBack ? 'chevron-left' : 'th'} type='font-awesome'/>}
                                    onPress={this.menuButtonPress}/>}
             centerComponent={{text: title, style: {color: '#fff'}}}
             rightComponent={{icon: 'home', color: '#fff'}}
