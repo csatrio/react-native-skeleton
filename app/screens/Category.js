@@ -54,6 +54,7 @@ class Category extends Component {
     };
 
     render() {
+        const {currentPage, categoryItems} = this.state
         return (
             <Fragment>
                 <NavigationHeader title='Akasa Bookstore'/>
@@ -64,8 +65,8 @@ class Category extends Component {
                             <Text h4>Category</Text>
                             <InfiniteScrollView style={{...styles.featured}}
                                                 fetchAtDifference={10}
-                                                scrollCb={() => this.fetchCategory(this.state.currentPage + 1)}
-                            >{this.state.categoryItems}</InfiniteScrollView>
+                                                scrollCb={() => this.fetchCategory(currentPage + 1)}
+                            >{categoryItems}</InfiniteScrollView>
                         </View>
                     </ScrollView>
                 </SafeAreaView>
