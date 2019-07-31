@@ -7,7 +7,7 @@
  */
 
 import React, {Component, Fragment} from 'react';
-import {SafeAreaView, ScrollView, StatusBar, StyleSheet, View} from 'react-native';
+import {SafeAreaView, ScrollView, StatusBar, StyleSheet, View, TouchableOpacity} from 'react-native';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {Card, Icon, Image, Text} from 'react-native-elements';
@@ -49,7 +49,22 @@ class Home extends Component {
         Get(`books/buku/?per_page=${this.itemPerPage}&page=${page}`)
             .then(r => {
                     r.data.rows.forEach((item, index) => {
-                        this.state.bannerItems.push(this.bookRenderCb(item, item.nama + index));
+                        const {kategori, nama, penerbit, tanggal_terbit, review, in_stock} = item;
+                        const namaKategori = notUndefined(kategori) ? kategori.nama_kategori : 'Umum';
+                        const book = (
+                            <Card key={item.nama + index} title={nama} containerStyle={styles.card}>
+                                <Image
+                                    source={{uri: 'https://facebook.github.io/react/logo-og.png'}}
+                                    style={styles.bookImage}
+                                />
+                                <View>
+                                    <BookText>Kategori: {namaKategori}</BookText>
+                                    <BookText>Penerbit: {penerbit}</BookText>
+                                    <BookText>Review: {review}</BookText>
+                                </View>
+                            </Card>
+                        );
+                        this.state.bannerItems.push(book);
                     });
 
                     this.setState({
@@ -59,77 +74,58 @@ class Home extends Component {
                     });
                 },
             );
-        //.catch(err => this.setState({msg: JSON.stringify(err)}));
     }
 
-    bookRenderCb = (item, index) => {
-        const {kategori, nama, penerbit, tanggal_terbit, review, in_stock} = item;
-        const namaKategori = notUndefined(kategori) ? kategori.nama_kategori : 'Umum';
-
-        return (
-            <Card key={index} title={nama} containerStyle={styles.card}>
-                <Image
-                    source={{uri: 'https://facebook.github.io/react/logo-og.png'}}
-                    style={styles.bookImage}
-                />
-                <View>
-                    <BookText>Kategori: {namaKategori}</BookText>
-                    <BookText>Penerbit: {penerbit}</BookText>
-                    <BookText>Review: {review}</BookText>
-                </View>
-            </Card>
-        );
-    };
-
-    gridRenderCb = (item, index) => {
-        const {icon, label, to, param} = item;
-        const onPress = () => {
-            if (notUndefined(to)) {
-                this.props.store.showDebug('onPress Grid')
-                this.props.navigation.navigate(to);
-            }
-        }
-        return (
-            <View key={'gridItem' + index}>
-                <Card>
-                    <Icon name={icon} type='font-awesome' onPress={onPress}/>
-                    <Text onPress={onPress}>{label}</Text>
-                </Card>
-            </View>
-        );
-    };
-
     render() {
+        const {bannerItems, currentPage} = this.state;
+        const {navigation} = this.props;
         return (
             <Fragment>
                 <NavigationHeader title='Akasa Bookstore'/>
                 <StatusBar barStyle="dark-content"/>
                 <SafeAreaView>
-                    <ScrollView>
+                    <ScrollView style={styles.mainScrollView}>
                         <View>
                             <Text h4>Icons</Text>
-                            <Grid list={this.gridList}
-                                  renderCallback={this.gridRenderCb}
-                                  size={3}
-                            />
+                            <Grid list={this.gridList} size={3}>
+                                {(item, index) => {
+                                    // render function of the grid is placed here
+                                    const {icon, label, to, param} = item;
+                                    const onPress = () => {
+                                        if (notUndefined(to)) {
+                                            navigation.navigate(to, notUndefined(param) ? param : {});
+                                        }
+                                    };
+                                    return (
+                                        <View key={'gridItem' + index}>
+                                            <TouchableOpacity onPress={onPress}>
+                                                <Card>
+                                                    <Icon name={icon} type='font-awesome'/>
+                                                    <Text>{label}</Text>
+                                                </Card>
+                                            </TouchableOpacity>
+                                        </View>
+                                    );
+                                }}
+                            </Grid>
                         </View>
 
                         <View>
                             <Text h4>Featured</Text>
-                            <InfiniteScrollView style={{...styles.scrollView}}
+                            <InfiniteScrollView style={{...styles.featured}}
                                                 fetchAtDifference={10}
-                                                scrollCb={() => this.fetchBook(this.state.currentPage + 1)}
+                                                scrollCb={() => this.fetchBook(currentPage + 1)}
                                                 horizontal={true}
-                            >{this.state.bannerItems}</InfiniteScrollView>
+                            >{bannerItems}</InfiniteScrollView>
                         </View>
 
                         <View>
                             <Text h4>Terlaris</Text>
-                            <InfiniteScrollView style={{...styles.scrollView}}
+                            <InfiniteScrollView style={{...styles.featured}}
                                                 fetchAtDifference={10}
-                                                scrollCb={() => this.fetchBook(this.state.currentPage + 1)}
+                                                scrollCb={() => this.fetchBook(currentPage + 1)}
                                                 horizontal={true}
-                            >{this.state.bannerItems}</InfiniteScrollView>
+                            >{bannerItems}</InfiniteScrollView>
                         </View>
                     </ScrollView>
                 </SafeAreaView>
@@ -139,8 +135,13 @@ class Home extends Component {
 }
 
 const styles = StyleSheet.create({
-    scrollView: {
+    mainScrollView: {
+        marginBottom: 35,
+        paddingBottom: 200,
+    },
+    featured: {
         backgroundColor: Colors.lighter,
+        marginBottom: 20,
     },
     bookImage: {
         width: 80,
