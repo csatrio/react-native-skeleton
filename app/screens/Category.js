@@ -62,7 +62,7 @@ class Category extends Component {
                     <ScrollView>
                         <View>
                             <Text h4>Category</Text>
-                            <InfiniteScrollView style={{...styles.scrollView}}
+                            <InfiniteScrollView style={{...styles.featured}}
                                                 fetchAtDifference={10}
                                                 scrollCb={() => this.fetchCategory(this.state.currentPage + 1)}
                             >{this.state.categoryItems}</InfiniteScrollView>
@@ -75,7 +75,7 @@ class Category extends Component {
 }
 
 const styles = StyleSheet.create({
-    scrollView: {
+    featured: {
         backgroundColor: Colors.lighter,
     },
 });
