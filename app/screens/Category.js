@@ -37,8 +37,8 @@ class Category extends Component {
                     });
 
                     this.setState({
-                        currentPage: r.data.current_page,
-                        categoryItems: this.state.categoryItems,
+                        currentBookPage: r.data.current_page,
+                        articleItems: this.state.categoryItems,
                     });
                 },
             );

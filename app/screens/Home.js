@@ -8,14 +8,17 @@
 
 import React, {Component, Fragment} from 'react';
 import {SafeAreaView, ScrollView, StatusBar, StyleSheet, View, TouchableOpacity} from 'react-native';
-
-import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {Card, Icon, Image, Text} from 'react-native-elements';
+import {createStackNavigator} from 'react-navigation';
+import {Card, Icon, Image, Text, Tile, Divider} from 'react-native-elements';
 import InfiniteScrollView from '../components/InfiniteScrollView';
 import {NavigationHeader} from '../navigation';
 import {Get} from '../network';
 import Grid from '../components/Grid';
 import {notUndefined} from '../helpers';
+import {injectStore} from '../store';
+
+import Article from '../screens/Article';
+import akasa from '../assets/akasa.jpeg';
 
 const BookText = (props) => {
     return <Text ellipsizeMode='tail' numberOfLines={1} style={{fontSize: 12}}>{props.children}</Text>;
@@ -25,8 +28,10 @@ class Home extends Component {
     itemPerPage = 10;
 
     state = {
-        bannerItems: [],
-        currentPage: 1,
+        featuredItems: [],
+        articleItems: [],
+        currentBookPage: 1,
+        currentArticlePage: 1,
     };
 
     gridList = [
@@ -43,50 +48,48 @@ class Home extends Component {
 
     componentDidMount() {
         this.fetchBook();
+        this.fetchArticle();
     }
 
-    fetchBook(page = this.state.currentPage) {
+    fetchBook = (page = this.state.currentBookPage) => {
         Get(`books/buku/?per_page=${this.itemPerPage}&page=${page}`)
             .then(r => {
-                    r.data.rows.forEach((item, index) => {
-                        const {kategori, nama, penerbit, tanggal_terbit, review, in_stock} = item;
-                        const namaKategori = notUndefined(kategori) ? kategori.nama_kategori : 'Umum';
-                        const book = (
-                            <Card key={item.nama + index} title={nama} containerStyle={styles.card}>
-                                <Image
-                                    source={{uri: 'https://facebook.github.io/react/logo-og.png'}}
-                                    style={styles.bookImage}
-                                />
-                                <View>
-                                    <BookText>Kategori: {namaKategori}</BookText>
-                                    <BookText>Penerbit: {penerbit}</BookText>
-                                    <BookText>Review: {review}</BookText>
-                                </View>
-                            </Card>
-                        );
-                        this.state.bannerItems.push(book);
-                    });
-
                     this.setState({
-                        currentPage: r.data.current_page,
-                        bannerItems: this.state.bannerItems,
-                        // msg: JSON.stringify(r.data.rows)
+                        currentBookPage: r.data.current_page,
+                        featuredItems: this.state.featuredItems.concat(r.data.rows),
                     });
                 },
             );
-    }
+    };
+
+    fetchArticle = (page = this.state.currentArticlePage) => {
+        Get(`books/article/?per_page=${this.itemPerPage}&page=${page}`)
+            .then(r => {
+                    this.setState({
+                        currentArticlePage: r.data.current_page,
+                        articleItems: this.state.articleItems.concat(r.data.rows),
+                    });
+                },
+            );
+    };
 
     render() {
-        const {bannerItems, currentPage} = this.state;
+        const {featuredItems, articleItems} = this.state;
         const {navigation} = this.props;
         return (
             <Fragment>
-                <NavigationHeader title='Akasa Bookstore'/>
+
                 <StatusBar barStyle="dark-content"/>
+
                 <SafeAreaView>
                     <ScrollView style={styles.mainScrollView}>
+
+                        <Tile imageSrc={akasa} contentContainerStyle={styles.bannerImage} height={150}/>
+
+
                         <View>
-                            <Text h4>Icons</Text>
+                            <Divider style={styles.divider}/>
+                            <View style={styles.sectionTextWrapper}><Text style={styles.sectionText}>Icons</Text></View>
                             <Grid list={this.gridList} size={3}>
                                 {(item, index) => {
                                     // render function of the grid is placed here
@@ -97,38 +100,85 @@ class Home extends Component {
                                         }
                                     };
                                     return (
-                                        <View key={'gridItem' + index}>
-                                            <TouchableOpacity onPress={onPress}>
-                                                <Card>
-                                                    <Icon name={icon} type='font-awesome'/>
-                                                    <Text>{label}</Text>
-                                                </Card>
-                                            </TouchableOpacity>
-                                        </View>
+                                        <TouchableOpacity key={'gridItem' + index} onPress={onPress}>
+                                            <Card>
+                                                <Icon name={icon} type='font-awesome'/>
+                                                <Text>{label}</Text>
+                                            </Card>
+                                        </TouchableOpacity>
                                     );
                                 }}
                             </Grid>
                         </View>
 
-                        <View>
-                            <Text h4>Featured</Text>
-                            <InfiniteScrollView style={{...styles.featured}}
-                                                fetchAtDifference={10}
-                                                scrollCb={() => this.fetchBook(currentPage + 1)}
+
+                        <View style={styles.featured}>
+                            <Divider style={styles.divider}/>
+                            <View style={styles.sectionTextWrapper}><Text
+                                style={styles.sectionText}>Featured</Text></View>
+                            <InfiniteScrollView fetchAtDifference={10}
+                                                scrollCb={() => this.fetchBook(this.state.currentBookPage + 1)}
                                                 horizontal={true}
-                            >{bannerItems}</InfiniteScrollView>
+                            >
+                                {featuredItems.map((item, index) => {
+                                    const {kategori, nama, penerbit, harga} = item;
+                                    const namaKategori = notUndefined(kategori) ? kategori.nama_kategori : 'Umum';
+                                    return (
+                                        <Card key={item.nama} title={nama} containerStyle={styles.card}>
+                                            <View style={styles.bookImageView}>
+                                                <Image
+                                                    source={{uri: 'https://facebook.github.io/react/logo-og.png'}}
+                                                    style={styles.bookImage}
+                                                />
+                                            </View>
+                                            <View>
+                                                <BookText>Kategori: {namaKategori}</BookText>
+                                                <BookText>Penerbit: {penerbit}</BookText>
+                                                <BookText>Harga: Rp. {harga}</BookText>
+                                            </View>
+                                        </Card>
+                                    );
+                                })}
+                            </InfiniteScrollView>
                         </View>
 
-                        <View>
-                            <Text h4>Terlaris</Text>
-                            <InfiniteScrollView style={{...styles.featured}}
-                                                fetchAtDifference={10}
-                                                scrollCb={() => this.fetchBook(currentPage + 1)}
+
+                        <View style={styles.article}>
+                            <Divider style={styles.divider}/>
+                            <View style={styles.sectionTextWrapper}><Text
+                                style={styles.sectionText}>Article</Text></View>
+                            <InfiniteScrollView fetchAtDifference={10}
+                                                scrollCb={() => this.fetchArticle(this.state.currentArticlePage + 1)}
                                                 horizontal={true}
-                            >{bannerItems}</InfiniteScrollView>
+                            >
+                                {articleItems.map((item, index) => {
+                                    const {judul, isi_artikel} = item;
+                                    const onPress = ()=>{
+                                        this.props.navigation.navigate('Article', {'item': item})
+                                    }
+                                    return (
+                                        <TouchableOpacity key={'article' + judul} onPress={onPress}>
+                                            <Card containerStyle={styles.card}>
+                                                <View style={styles.bookImageView}>
+                                                    <Image
+                                                        source={{uri: 'https://facebook.github.io/react/logo-og.png'}}
+                                                        style={styles.bookImage}
+                                                    />
+                                                </View>
+                                                <View>
+                                                    <BookText>Judul: {judul}</BookText>
+                                                    <BookText>Artikel: {isi_artikel}</BookText>
+                                                </View>
+                                            </Card>
+                                        </TouchableOpacity>
+                                    );
+                                })}
+                            </InfiniteScrollView>
                         </View>
+
                     </ScrollView>
                 </SafeAreaView>
+
             </Fragment>
         );
     };
@@ -137,15 +187,33 @@ class Home extends Component {
 const styles = StyleSheet.create({
     mainScrollView: {
         marginBottom: 35,
+        marginLeft: 5,
+        marginRight: 5,
         paddingBottom: 200,
     },
+    bannerImage: {},
+    divider: {
+        marginTop: 5,
+        marginBottom: 5,
+    },
+    sectionTextWrapper: {
+        alignItems: 'flex-start',
+    },
+    sectionText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
     featured: {
-        backgroundColor: Colors.lighter,
-        marginBottom: 20,
+        marginTop: 20,
+    },
+    article: {
+        marginTop: 20,
     },
     bookImage: {
         width: 80,
         height: 60,
+    },
+    bookImageView: {
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 10,
@@ -165,4 +233,17 @@ const styles = StyleSheet.create({
 
 });
 
-export default Home;
+export default createStackNavigator({
+    Home: {
+        screen: injectStore(Home),
+        navigationOptions: (prop) => ({
+            header: <NavigationHeader title='Akasa Bookstore'/>,
+        }),
+    },
+    Article: {
+        screen: injectStore(Article),
+        navigationOptions: (prop) => ({
+            header: <NavigationHeader title='Article Detail'/>,
+        }),
+    },
+}, {initialRouteName: 'Home'});

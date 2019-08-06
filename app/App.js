@@ -1,15 +1,12 @@
 import {createAppContainer, createBottomTabNavigator} from 'react-navigation';
 import {Icon, ThemeProvider, Overlay} from 'react-native-elements';
-import {View, Text} from 'react-native';
+import {Text} from 'react-native';
 import {Theme} from './configuration/index';
 import React from 'react';
-import {inject, observer, Provider} from 'mobx-react';
+import {observer, Provider} from 'mobx-react';
 import Home from './screens/Home';
 import Category from './screens/Category';
-import stores from './store';
-
-const storeKeys = Object.keys(stores).map(key => key);
-const injectStore = (screen) => inject(...storeKeys)(observer(screen));
+import stores, {injectStore} from './store';
 
 const TabIcon = (props) => {
     const {focused, horizontal, tintColor, name, type} = props;
@@ -24,7 +21,7 @@ const TabIcon = (props) => {
 const TabNavigator = createBottomTabNavigator(
     {
         Home: {
-            screen: injectStore(Home),
+            screen: Home,
             navigationOptions: (navProps) => ({
                 tabBarIcon: (props) => <TabIcon {...props} name='home'/>,
                 tabBarLabel: 'Home Screen',
