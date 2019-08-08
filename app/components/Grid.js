@@ -5,7 +5,6 @@ import {notUndefined} from '../helpers';
 
 const defaultRowStyle = {
     flexDirection: 'row',
-    alignItems: 'stretch',
     justifyContent: 'space-between',
 };
 
