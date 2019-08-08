@@ -2,27 +2,22 @@ import React from 'react';
 import {Button, Header, Icon} from 'react-native-elements';
 import {inject, observer} from 'mobx-react';
 import {Platform, StyleSheet} from 'react-native';
+import {notUndefined} from '../helpers';
 
 @inject('store')
 @observer
 export default class NavigationHeader extends React.Component {
 
     menuButtonPress = () => {
-        if (!this.props.isBack) {
-            this.props.navigation.toggleDrawer();
-        }
-        else {
-            this.props.navigation.pop();
-        }
-
+      this.props.navigation.pop()
     };
 
     render() {
-        const {title, isBack} = this.props;
+        const {title, isBack, onBackPress} = this.props;
         return <Header
             placement='center'
-            leftComponent={<Button icon={<Icon name={isBack ? 'chevron-left' : 'th'} type='font-awesome'/>}
-                                   onPress={this.menuButtonPress}/>}
+            leftComponent={<Button icon={<Icon name={isBack ? 'chevron-left' : 'home'} type='font-awesome'/>}
+                                   onPress={notUndefined(onBackPress) ? onBackPress : this.menuButtonPress}/>}
             centerComponent={{text: title, style: {color: '#fff'}}}
             rightComponent={{icon: 'home', color: '#fff'}}
             containerStyle={styles.container}
