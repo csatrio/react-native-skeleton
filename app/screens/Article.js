@@ -13,13 +13,6 @@ import {Button, Text} from 'react-native-elements';
 
 
 class Article extends Component {
-    itemPerPage = 10;
-
-    state = {
-        articleItems: [],
-        currentPage: 1,
-    };
-
 
     componentDidMount() {
     }

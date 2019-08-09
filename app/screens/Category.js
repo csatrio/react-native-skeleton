@@ -8,12 +8,15 @@
 
 import React, {Component, Fragment} from 'react';
 import {SafeAreaView, ScrollView, StatusBar, StyleSheet, View} from 'react-native';
-
-import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {Button, Text} from 'react-native-elements';
-import InfiniteScrollView from '../components/InfiniteScrollView';
+import {ListItem} from 'react-native-elements';
+import {createStackNavigator} from 'react-navigation';
+import {Button, Text, Divider} from 'react-native-elements';
 import {NavigationHeader} from '../navigation';
 import {Get} from '../network';
+import {notUndefined} from '../helpers';
+import {injectStore} from '../store';
+import BookList from './BookList'
+import BookDetail from './BookDetail'
 
 
 class Category extends Component {
@@ -22,6 +25,7 @@ class Category extends Component {
     state = {
         categoryItems: [],
         currentPage: 1,
+        txt: '-',
     };
 
 
@@ -32,42 +36,32 @@ class Category extends Component {
     fetchCategory(page = this.state.currentPage) {
         Get(`books/kategori/?per_page=${this.itemPerPage}&page=${page}`)
             .then(r => {
-                    r.data.rows.forEach((item, index) => {
-                        this.state.categoryItems.push(this.categoryRenderCb(item, item.nama + index));
-                    });
-
                     this.setState({
                         currentBookPage: r.data.current_page,
-                        articleItems: this.state.categoryItems,
+                        categoryItems: this.state.categoryItems.concat(r.data.rows),
                     });
                 },
             );
-        //.catch(err => this.setState({msg: JSON.stringify(err)}));
     }
 
-    categoryRenderCb = (item, index) => {
-        const {nama_kategori} = item;
-
-        return (
-            <Button key={nama_kategori + index} title={nama_kategori}/>
-        );
-    };
-
     render() {
-        const {currentPage, categoryItems} = this.state
+        const {categoryItems} = this.state;
         return (
             <Fragment>
-                <NavigationHeader title='Akasa Bookstore'/>
                 <StatusBar barStyle="dark-content"/>
                 <SafeAreaView>
                     <ScrollView>
-                        <View>
-                            <Text h4>Category</Text>
-                            <InfiniteScrollView style={{...styles.featured}}
-                                                fetchAtDifference={10}
-                                                scrollCb={() => this.fetchCategory(currentPage + 1)}
-                            >{categoryItems}</InfiniteScrollView>
-                        </View>
+                        {categoryItems.map(({nama_kategori, icon}, index) => (
+                            <React.Fragment key={'item' + index}>
+                                <ListItem
+                                    title={nama_kategori}
+                                    leftIcon={{name: notUndefined(icon) ? icon : 'plus-square', type: 'font-awesome'}}
+                                    rightIcon={{name: 'chevron-right', type: 'font-awesome'}}
+                                    onPress={() => this.props.navigation.navigate('List', {nama_kategori: nama_kategori})}
+                                />
+                                <Divider/>
+                            </React.Fragment>
+                        ))}
                     </ScrollView>
                 </SafeAreaView>
             </Fragment>
@@ -75,10 +69,25 @@ class Category extends Component {
     };
 }
 
-const styles = StyleSheet.create({
-    featured: {
-        backgroundColor: Colors.lighter,
-    },
-});
+const styles = StyleSheet.create({});
 
-export default Category;
+export default createStackNavigator({
+    Category:{
+        screen: injectStore(Category),
+        navigationOptions: (navProp) => ({
+            header: <NavigationHeader title='Kategori Buku' {...navProp}/>,
+        }),
+    },
+    List: {
+        screen: injectStore(BookList),
+        navigationOptions: (navProp) => ({
+            header: <NavigationHeader title={navProp.navigation.getParam('nama_kategori')} isBack={true} {...navProp}/>,
+        }),
+    },
+    Detail: {
+        screen: injectStore(BookDetail),
+        navigationOptions: (navProp) => ({
+            header: <NavigationHeader title={navProp.navigation.getParam('item').nama} isBack={true} {...navProp}/>,
+        }),
+    }
+},{initialRouteName: 'Category'});

@@ -18,7 +18,9 @@ import {notUndefined} from '../helpers';
 import {injectStore} from '../store';
 
 import Article from '../screens/Article';
+import BookDetail from './BookDetail';
 import akasa from '../assets/akasa.jpeg';
+import react_logo from '../assets/react-logo.png'
 
 const BookText = (props) => {
     return <Text ellipsizeMode='tail' numberOfLines={1} style={{fontSize: 12}}>{props.children}</Text>;
@@ -86,10 +88,9 @@ class Home extends Component {
 
                         <Tile imageSrc={akasa} contentContainerStyle={styles.bannerImage} height={150}/>
 
-
                         <View>
-                            <Divider style={styles.divider}/>
                             <View style={styles.sectionTextWrapper}><Text style={styles.sectionText}>Icons</Text></View>
+                            <Card containerStyle={{marginLeft:2, marginRight:2}}>
                             <Grid list={this.gridList} size={3}>
                                 {(item, index) => {
                                     // render function of the grid is placed here
@@ -101,7 +102,7 @@ class Home extends Component {
                                     };
                                     return (
                                         <TouchableOpacity key={'gridItem' + index} onPress={onPress}>
-                                            <Card>
+                                            <Card containerStyle={{marginLeft:0, marginRight:0}}>
                                                 <Icon name={icon} type='font-awesome'/>
                                                 <Text>{label}</Text>
                                             </Card>
@@ -109,34 +110,39 @@ class Home extends Component {
                                     );
                                 }}
                             </Grid>
+                            </Card>
                         </View>
 
 
                         <View style={styles.featured}>
-                            <Divider style={styles.divider}/>
-                            <View style={styles.sectionTextWrapper}><Text
-                                style={styles.sectionText}>Featured</Text></View>
+                            <View style={styles.sectionTextWrapper}><Text style={styles.sectionText}>Featured</Text></View>
                             <InfiniteScrollView fetchAtDifference={10}
                                                 scrollCb={() => this.fetchBook(this.state.currentBookPage + 1)}
                                                 horizontal={true}
                             >
                                 {featuredItems.map((item, index) => {
-                                    const {kategori, nama, penerbit, harga} = item;
+                                    const {kategori, nama, penerbit, harga, cover} = item;
                                     const namaKategori = notUndefined(kategori) ? kategori.nama_kategori : 'Umum';
+                                    const onPress = () => {
+                                        this.props.navigation.navigate('BookDetail', {'item': item});
+                                    };
+                                    const coverImg = cover === null ? react_logo : {uri: cover}
                                     return (
-                                        <Card key={item.nama} title={nama} containerStyle={styles.card}>
-                                            <View style={styles.bookImageView}>
-                                                <Image
-                                                    source={{uri: 'https://facebook.github.io/react/logo-og.png'}}
-                                                    style={styles.bookImage}
-                                                />
-                                            </View>
-                                            <View>
-                                                <BookText>Kategori: {namaKategori}</BookText>
-                                                <BookText>Penerbit: {penerbit}</BookText>
-                                                <BookText>Harga: Rp. {harga}</BookText>
-                                            </View>
-                                        </Card>
+                                        <TouchableOpacity key={nama} onPress={onPress}>
+                                            <Card title={nama} containerStyle={styles.card}>
+                                                <View style={styles.bookImageView}>
+                                                    <Image
+                                                        source={coverImg}
+                                                        style={styles.bookImage}
+                                                    />
+                                                </View>
+                                                <View>
+                                                    <BookText>Kategori: {namaKategori}</BookText>
+                                                    <BookText>Penerbit: {penerbit}</BookText>
+                                                    <BookText>Harga: Rp. {harga}</BookText>
+                                                </View>
+                                            </Card>
+                                        </TouchableOpacity>
                                     );
                                 })}
                             </InfiniteScrollView>
@@ -144,24 +150,22 @@ class Home extends Component {
 
 
                         <View style={styles.article}>
-                            <Divider style={styles.divider}/>
-                            <View style={styles.sectionTextWrapper}><Text
-                                style={styles.sectionText}>Article</Text></View>
+                            <View style={styles.sectionTextWrapper}><Text style={styles.sectionText}>Article</Text></View>
                             <InfiniteScrollView fetchAtDifference={10}
                                                 scrollCb={() => this.fetchArticle(this.state.currentArticlePage + 1)}
                                                 horizontal={true}
                             >
                                 {articleItems.map((item, index) => {
                                     const {judul, isi_artikel} = item;
-                                    const onPress = ()=>{
-                                        this.props.navigation.navigate('Article', {'item': item})
-                                    }
+                                    const onPress = () => {
+                                        this.props.navigation.navigate('Article', {'item': item});
+                                    };
                                     return (
                                         <TouchableOpacity key={'article' + judul} onPress={onPress}>
                                             <Card containerStyle={styles.card}>
                                                 <View style={styles.bookImageView}>
                                                     <Image
-                                                        source={{uri: 'https://facebook.github.io/react/logo-og.png'}}
+                                                        source={react_logo}
                                                         style={styles.bookImage}
                                                     />
                                                 </View>
@@ -193,8 +197,8 @@ const styles = StyleSheet.create({
     },
     bannerImage: {},
     divider: {
-        marginTop: 5,
-        marginBottom: 5,
+        marginTop: 1,
+        marginBottom: 2,
     },
     sectionTextWrapper: {
         alignItems: 'flex-start',
@@ -236,14 +240,20 @@ const styles = StyleSheet.create({
 export default createStackNavigator({
     Home: {
         screen: injectStore(Home),
-        navigationOptions: (prop) => ({
-            header: <NavigationHeader title='Akasa Bookstore'/>,
+        navigationOptions: (navProp) => ({
+            header: <NavigationHeader title='Akasa Bookstore' {...navProp}/>,
         }),
     },
     Article: {
         screen: injectStore(Article),
-        navigationOptions: (prop) => ({
-            header: <NavigationHeader title='Article Detail'/>,
+        navigationOptions: (navProp) => ({
+            header: <NavigationHeader title='Article Detail' isBack={true} {...navProp}/>,
+        }),
+    },
+    BookDetail: {
+        screen: injectStore(BookDetail),
+        navigationOptions: (navProp) => ({
+            header: <NavigationHeader title='Book Detail' isBack={true} {...navProp}/>,
         }),
     },
 }, {initialRouteName: 'Home'});
