@@ -1,13 +1,13 @@
-import {createAppContainer, createBottomTabNavigator, createStackNavigator, withNavigation} from 'react-navigation';
+import {createAppContainer, createBottomTabNavigator} from 'react-navigation';
 import {Icon, ThemeProvider, Overlay} from 'react-native-elements';
 import {Text} from 'react-native';
 import {Theme} from './configuration/index';
 import React from 'react';
 import {observer, Provider} from 'mobx-react';
-import Home from './screens/Home';
-import Category from './screens/Category';
+import Home from './screens/home/Home';
+import Category from './screens/category/Category';
 import stores, {injectStore} from './store';
-import NavigationHeader from './navigation/NavigationHeader';
+import {notUndefined} from './helpers';
 
 const TabIcon = (props) => {
     const {focused, horizontal, tintColor, name, type} = props;
@@ -15,7 +15,7 @@ const TabIcon = (props) => {
                  focused={focused}
                  horizontal={horizontal}
                  color={tintColor}
-                 type={typeof(type) === 'undefined' ? 'font-awesome' : type}
+                 type={notUndefined(type) ? 'font-awesome' : type}
     />;
 };
 
@@ -31,21 +31,21 @@ const TabNavigator = createBottomTabNavigator(
         Category: {
             screen: injectStore(Category),
             navigationOptions: (navProps) => ({
-                tabBarIcon: (props) => <TabIcon {...props} name='sitemap'/>,
+                tabBarIcon: (props) => <TabIcon {...props} name='sitemap' type='material'/>,
                 tabBarLabel: 'Category',
             }),
         },
         Settings: {
             screen: Home,
             navigationOptions: (navProps) => ({
-                tabBarIcon: (props) => <TabIcon {...props} name='gears'/>,
+                tabBarIcon: (props) => <TabIcon {...props} name='gears' type='material'/>,
                 tabBarLabel: 'Settings',
             }),
         },
         Accounts: {
             screen: Home,
             navigationOptions: (navProps) => ({
-                tabBarIcon: (props) => <TabIcon {...props} name='user'/>,
+                tabBarIcon: (props) => <TabIcon {...props} name='user' type='material'/>,
                 tabBarLabel: 'Acccounts',
             }),
         },

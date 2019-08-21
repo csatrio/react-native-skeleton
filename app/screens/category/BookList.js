@@ -7,11 +7,11 @@
  */
 
 import React, {Component, Fragment} from 'react';
-import {SafeAreaView} from 'react-native';
+import {SafeAreaView, FlatList} from 'react-native';
 import {ListItem, Text, Divider, Image} from 'react-native-elements';
-import {Get} from '../network';
-import InfiniteScrollView from '../components/InfiniteScrollView';
-import react_logo from '../assets/react-logo.png';
+import {Get} from '../../network/index';
+import InfiniteScrollView from '../../components/InfiniteScrollView';
+import react_logo from '../../assets/react-logo.png';
 
 
 class BookList extends Component {

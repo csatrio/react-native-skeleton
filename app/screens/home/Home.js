@@ -9,18 +9,18 @@
 import React, {Component, Fragment} from 'react';
 import {SafeAreaView, ScrollView, StatusBar, StyleSheet, View, TouchableOpacity} from 'react-native';
 import {createStackNavigator} from 'react-navigation';
-import {Card, Icon, Image, Text, Tile, Divider} from 'react-native-elements';
-import InfiniteScrollView from '../components/InfiniteScrollView';
-import {NavigationHeader} from '../navigation';
-import {Get} from '../network';
-import Grid from '../components/Grid';
-import {notUndefined} from '../helpers';
-import {injectStore} from '../store';
+import {Card, Icon, Image, Text, Tile, SearchBar, colors} from 'react-native-elements';
+import InfiniteScrollView from '../../components/InfiniteScrollView';
+import {NavigationHeader} from '../../navigation/index';
+import {Get} from '../../network/index';
+import Grid from '../../components/Grid';
+import {notUndefined} from '../../helpers/index';
+import {injectStore} from '../../store/index';
 
-import Article from '../screens/Article';
-import BookDetail from './BookDetail';
-import akasa from '../assets/akasa.jpeg';
-import react_logo from '../assets/react-logo.png'
+import Article from '../Article';
+import BookDetail from '../BookDetail';
+import akasa from '../../assets/akasa.jpeg';
+import react_logo from '../../assets/react-logo.png'
 
 const BookText = (props) => {
     return <Text ellipsizeMode='tail' numberOfLines={1} style={{fontSize: 12}}>{props.children}</Text>;
@@ -34,6 +34,7 @@ class Home extends Component {
         articleItems: [],
         currentBookPage: 1,
         currentArticlePage: 1,
+        search: ''
     };
 
     gridList = [
@@ -84,6 +85,14 @@ class Home extends Component {
                 <StatusBar barStyle="dark-content"/>
 
                 <SafeAreaView>
+                    <SearchBar value={this.state.search}
+                               placeholder='cari di akasa...'
+                               onChangeText={(e)=>this.setState({search: e})}
+                               round={true}
+                               lightTheme={true}
+                               containerStyle={{backgroundColor: colors.primary}}
+                               inputContainerStyle={{backgroundColor: '#ffff'}}
+                    />
                     <ScrollView style={styles.mainScrollView}>
 
                         <Tile imageSrc={akasa} contentContainerStyle={styles.bannerImage} height={150}/>
@@ -241,7 +250,7 @@ export default createStackNavigator({
     Home: {
         screen: injectStore(Home),
         navigationOptions: (navProp) => ({
-            header: <NavigationHeader title='Akasa Bookstore' {...navProp}/>,
+            header:null
         }),
     },
     Article: {

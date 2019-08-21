@@ -11,12 +11,12 @@ import {SafeAreaView, ScrollView, StatusBar, StyleSheet, View} from 'react-nativ
 import {ListItem} from 'react-native-elements';
 import {createStackNavigator} from 'react-navigation';
 import {Button, Text, Divider} from 'react-native-elements';
-import {NavigationHeader} from '../navigation';
-import {Get} from '../network';
-import {notUndefined} from '../helpers';
-import {injectStore} from '../store';
+import {NavigationHeader} from '../../navigation/index';
+import {Get} from '../../network/index';
+import {notUndefined} from '../../helpers/index';
+import {injectStore} from '../../store/index';
 import BookList from './BookList'
-import BookDetail from './BookDetail'
+import BookDetail from '../BookDetail'
 
 
 class Category extends Component {
