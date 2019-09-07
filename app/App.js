@@ -8,6 +8,7 @@ import Home from './screens/home/Home';
 import Category from './screens/category/Category';
 import NewsList from './screens/news/NewsList';
 import Affiliate from './screens/affiliates/AffiliateList';
+import About from './screens/About'
 import stores, {injectStore} from './store';
 import {notUndefined} from './helpers';
 
@@ -49,6 +50,13 @@ const TabNavigator = createBottomTabNavigator(
             navigationOptions: (navProps) => ({
                 tabBarIcon: (props) => <TabIcon {...props} name='users' type='font-awesome'/>,
                 tabBarLabel: 'Affiliates',
+            }),
+        },
+        About: {
+            screen: About,
+            navigationOptions: (navProps) => ({
+                tabBarIcon: (props) => <TabIcon {...props} name='question' type='font-awesome'/>,
+                tabBarLabel: 'About',
             }),
         },
     },
