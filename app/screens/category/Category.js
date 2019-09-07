@@ -7,16 +7,15 @@
  */
 
 import React, {Component, Fragment} from 'react';
-import {SafeAreaView, ScrollView, StatusBar, StyleSheet, View} from 'react-native';
-import {ListItem} from 'react-native-elements';
+import {SafeAreaView, ScrollView, StyleSheet} from 'react-native';
+import {Divider, ListItem} from 'react-native-elements';
 import {createStackNavigator} from 'react-navigation';
-import {Button, Text, Divider} from 'react-native-elements';
 import {NavigationHeader} from '../../navigation/index';
 import {Get} from '../../network/index';
 import {notUndefined} from '../../helpers/index';
 import {injectStore} from '../../store/index';
-import BookList from './BookList'
-import BookDetail from '../BookDetail'
+import BookList from './BookList';
+import BookDetail from '../BookDetail';
 
 
 class Category extends Component {
@@ -37,7 +36,7 @@ class Category extends Component {
         Get(`books/kategori/?per_page=${this.itemPerPage}&page=${page}`)
             .then(r => {
                     this.setState({
-                        currentBookPage: r.data.current_page,
+                        currentPage: r.data.current_page,
                         categoryItems: this.state.categoryItems.concat(r.data.rows),
                     });
                 },
@@ -48,7 +47,6 @@ class Category extends Component {
         const {categoryItems} = this.state;
         return (
             <Fragment>
-                <StatusBar barStyle="dark-content"/>
                 <SafeAreaView>
                     <ScrollView>
                         {categoryItems.map(({nama_kategori, icon}, index) => (
@@ -75,7 +73,7 @@ export default createStackNavigator({
     Category:{
         screen: injectStore(Category),
         navigationOptions: (navProp) => ({
-            header: <NavigationHeader title='Kategori Buku' {...navProp}/>,
+            header: <NavigationHeader title='Category' {...navProp}/>,
         }),
     },
     List: {

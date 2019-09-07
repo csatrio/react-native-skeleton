@@ -1,6 +1,6 @@
 import {FlatList} from 'react-native';
 import React from 'react';
-import {notUndefined, emptyFunction} from '../helpers';
+import {emptyFunction, notUndefined} from '../helpers';
 
 export default class InfiniteScrollView extends React.Component {
 

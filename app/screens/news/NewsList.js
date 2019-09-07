@@ -12,37 +12,31 @@ import {Divider, ListItem, Text} from 'react-native-elements';
 import {Get} from '../../network/index';
 import InfiniteScrollView from '../../components/InfiniteScrollView';
 import react_logo from '../../assets/react-logo.png';
-import {notUndefined} from '../../helpers';
+import {createStackNavigator} from 'react-navigation';
+import {injectStore} from '../../store';
+import NavigationHeader from '../../navigation/NavigationHeader';
+import NewsDetail from './NewsDetail';
 
 
-class BookList extends Component {
+class NewsList extends Component {
 
     itemPerPage = 10;
 
     state = {
-        currentBookPage: 1,
+        currentPage: 1,
         items: [],
-        link: ''
     };
 
     componentDidMount() {
-        const {navigation} = this.props
-        this.is_kategori = notUndefined(navigation.getParam('nama_kategori')) ? true: false;
-        this.keyword = notUndefined(navigation.getParam('nama_kategori')) ? navigation.getParam('nama_kategori')
-            : navigation.getParam('search')
-        this.fetchDetail(this.keyword, 1);
+        this.fetchNews(1);
     }
 
-    fetchDetail(keyword, page) {
-        const url = this.is_kategori ?
-            `books/buku/?per_page=${this.itemPerPage}&page=${page}&kategori__nama_kategori=${keyword}`:
-            `books/buku/?per_page=${this.itemPerPage}&page=${page}&nama=${keyword}`;
-        Get(url)
+    fetchNews(page) {
+        Get(`books/news/?per_page=${this.itemPerPage}&page=${page}`)
             .then(r => {
                     this.setState({
                         currentPage: r.data.current_page + 1,
                         items: page === 1 ? r.data.rows : this.state.items.concat(r.data.rows),
-                        link: url
                     });
                 },
             );
@@ -53,22 +47,20 @@ class BookList extends Component {
         return (
             <Fragment>
                 <SafeAreaView>
-                    {/*<Text>{this.state.link}</Text>*/}
                     <InfiniteScrollView fetchAtDifference={10}
                                         data={this.state.items}
-                                        scrollCb={() => this.fetchDetail(this.keyword, this.state.currentBookPage + 1)}
+                                        scrollCb={() => this.fetchNews(this.state.currentPage + 1)}
                                         keyExtractor={(item, index)=>index.toString()}
                                         renderItem={({item, index}) => {
-                                            const {kategori, nama, penerbit, harga, cover} = item;
-                                            const coverImg = cover === null ? react_logo : {uri: cover};
+                                            const {judul, deskripsi_pendek, thumbnail} = item;
+                                            const coverImg = thumbnail === null || typeof(thumbnail)==='undefined' ? react_logo : {uri: thumbnail};
                                             return (
                                                 <React.Fragment>
                                                     <ListItem
-                                                        title={nama}
+                                                        title={judul}
                                                         subtitle={
                                                             <React.Fragment>
-                                                                <Text>Price: Rp. {harga}</Text>
-                                                                <Text>Publisher: {penerbit}</Text>
+                                                                <Text>{deskripsi_pendek}</Text>
                                                             </React.Fragment>
                                                         }
                                                         rightAvatar={{
@@ -91,4 +83,17 @@ class BookList extends Component {
     };
 }
 
-export default BookList;
+export default createStackNavigator({
+    Home:{
+        screen: injectStore(NewsList),
+        navigationOptions: (navProp) => ({
+            header: <NavigationHeader title='News' {...navProp}/>,
+        }),
+    },
+    Detail: {
+        screen: injectStore(NewsDetail),
+        navigationOptions: (navProp) => ({
+            header: <NavigationHeader title={navProp.navigation.getParam('item').nama} isBack={true} {...navProp}/>,
+        }),
+    }
+},{initialRouteName: 'Home'});

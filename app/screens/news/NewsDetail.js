@@ -10,13 +10,11 @@ import React, {Component, Fragment} from 'react';
 import {ActivityIndicator, Dimensions, SafeAreaView, ScrollView, StyleSheet, View} from 'react-native';
 
 import {Image, Text} from 'react-native-elements';
-import react_logo from '../assets/react-logo.png';
-import {notUndefined} from '../helpers';
-
+import react_logo from '../../assets/react-logo.png';
 
 const WIDTH = Math.round(Dimensions.get('window').width);
 const HEIGHT = Math.round(Dimensions.get('window').height);
-const defaultCategory = 'Umum';
+
 
 const styles = StyleSheet.create({
     stretch: {
@@ -42,33 +40,29 @@ const styles = StyleSheet.create({
     },
 });
 
-class BookDetail extends Component {
+class NewsDetail extends Component {
 
     componentDidMount() {
     }
 
 
     render() {
-        const {kategori, nama, penerbit, harga, cover, review} = this.props.navigation.getParam('item');
-        const coverImg = cover === null ? react_logo : {uri: cover}
+        const {judul, kata_kunci, deskripsi_pendek, isi_artikel, image} = this.props.navigation.getParam('item')
+        const coverImg = image === null || typeof(image) === 'undefined' ? react_logo : {uri: image}
         return (
             <Fragment>
                 <SafeAreaView>
                     <ScrollView>
                         <View>
-                            <View style={styles.center}><Text h4>{nama}</Text></View>
+                            <View style={styles.center}><Text h4>{judul}</Text></View>
                             <Image source={coverImg}
                                    style={styles.stretch}
                                    containerStyle={styles.center}
                                    placeholderContent={<ActivityIndicator/>}
                             />
                             <View style={styles.textSection}>
-                                <Text style={styles.text}>Price: {harga}</Text>
-                                <Text style={styles.text}
-                                >Category: {notUndefined(kategori) ? kategori.nama_kategori : defaultCategory}</Text>
-                                <Text style={styles.text}>Publisher: {penerbit}</Text>
-                                <Text style={{...styles.text, marginTop: 10}}>Review:</Text>
-                                <Text style={styles.review}>{review}</Text>
+                                <Text style={styles.text}>Keyword: {kata_kunci}</Text>
+                                <Text style={{...styles.review, marginTop: 10}}>{isi_artikel}</Text>
                             </View>
                         </View>
                     </ScrollView>
@@ -78,4 +72,4 @@ class BookDetail extends Component {
     };
 }
 
-export default BookDetail;
+export default NewsDetail;

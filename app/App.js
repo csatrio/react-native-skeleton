@@ -1,11 +1,12 @@
 import {createAppContainer, createBottomTabNavigator} from 'react-navigation';
-import {Icon, ThemeProvider, Overlay} from 'react-native-elements';
+import {Icon, Overlay, ThemeProvider} from 'react-native-elements';
 import {Text} from 'react-native';
 import {Theme} from './configuration/index';
 import React from 'react';
 import {observer, Provider} from 'mobx-react';
 import Home from './screens/home/Home';
 import Category from './screens/category/Category';
+import NewsList from './screens/news/NewsList';
 import stores, {injectStore} from './store';
 import {notUndefined} from './helpers';
 
@@ -35,18 +36,18 @@ const TabNavigator = createBottomTabNavigator(
                 tabBarLabel: 'Category',
             }),
         },
-        Settings: {
-            screen: Home,
+        News: {
+            screen: NewsList,
             navigationOptions: (navProps) => ({
-                tabBarIcon: (props) => <TabIcon {...props} name='gears' type='material'/>,
-                tabBarLabel: 'Settings',
+                tabBarIcon: (props) => <TabIcon {...props} name='rss-square' type='font-awesome'/>,
+                tabBarLabel: 'News',
             }),
         },
-        Accounts: {
+        Affiliates: {
             screen: Home,
             navigationOptions: (navProps) => ({
-                tabBarIcon: (props) => <TabIcon {...props} name='user' type='material'/>,
-                tabBarLabel: 'Acccounts',
+                tabBarIcon: (props) => <TabIcon {...props} name='users' type='font-awesome'/>,
+                tabBarLabel: 'Affiliates',
             }),
         },
     },

@@ -7,13 +7,12 @@
  */
 
 import React, {Component, Fragment} from 'react';
-import {SafeAreaView, ScrollView, StyleSheet, View, TouchableOpacity} from 'react-native';
+import {Dimensions, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {createStackNavigator} from 'react-navigation';
-import {Card, Image, Text, Tile, SearchBar, Icon, colors} from 'react-native-elements';
+import {Card, colors, Icon, Image, SearchBar, Text, Tile} from 'react-native-elements';
 import InfiniteScrollView from '../../components/InfiniteScrollView';
 import {NavigationHeader} from '../../navigation/index';
 import {Get} from '../../network/index';
-import IconGrid from './IconGrid';
 import {notUndefined} from '../../helpers/index';
 import {injectStore} from '../../store/index';
 
@@ -22,7 +21,6 @@ import BookDetail from '../BookDetail';
 import BookList from '../category/BookList';
 import akasa from '../../assets/akasa.jpeg';
 import react_logo from '../../assets/react-logo.png';
-import {Dimensions} from 'react-native';
 
 const BookText = (props) => {
     return <Text ellipsizeMode='tail' numberOfLines={1} style={{fontSize: 12}}>{props.children}</Text>;
@@ -55,7 +53,7 @@ class Home extends Component {
         Get(`books/buku/?per_page=${this.itemPerPage}&page=${page}`)
             .then(r => {
                     this.setState({
-                        currentBookPage: r.data.current_page,
+                        currentPage: r.data.current_page,
                         featuredItems: this.state.featuredItems.concat(r.data.rows),
                     });
                 },
@@ -94,7 +92,7 @@ class Home extends Component {
                                onChangeText={this.searchBook}
                                round={true}
                                containerStyle={{backgroundColor: colors.searchBg}}
-                               lightTheme={true}
+                               lightTheme={false}
                                inputContainerStyle={{backgroundColor: '#ffff'}}
                                showLoading={searchLoading}
                     />
@@ -158,16 +156,17 @@ class Home extends Component {
                                                 keyExtractor={(item, index) => index.toString()}
                                                 data={articleItems}
                                                 renderItem={({item, index}) => {
-                                                    const {judul, deskripsi_pendek} = item;
+                                                    const {judul, deskripsi_pendek, thumbnail} = item;
                                                     const onPress = () => {
                                                         this.props.navigation.navigate('Article', {'item': item});
                                                     };
+                                                    const thumb = thumbnail === null || !notUndefined(thumbnail) ? react_logo : {uri: thumbnail};
                                                     return (
                                                         <TouchableOpacity key={'article' + judul} onPress={onPress}>
                                                             <Card containerStyle={styles.card}>
                                                                 <View style={styles.bookImageView}>
                                                                     <Image
-                                                                        source={react_logo}
+                                                                        source={thumb}
                                                                         style={styles.bookImage}
                                                                     />
                                                                 </View>
@@ -200,9 +199,10 @@ const styles = StyleSheet.create({
     bannerImage: {
         padding: 5,
         margin: 5,
+        marginTop: 12,
         borderRadius: 10,
-        borderWidth: 1,
-        borderColor: 'black',
+        borderWidth: 2,
+        borderColor: colors.greyOutline,
     },
     divider: {
         marginTop: 1,
