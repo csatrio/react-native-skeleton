@@ -11,11 +11,12 @@ import {SafeAreaView, ScrollView, View, StyleSheet, Dimensions, ActivityIndicato
 
 import {Text, Image} from 'react-native-elements';
 import react_logo from '../assets/react-logo.png';
+import {notUndefined} from '../helpers';
 
 
 const WIDTH = Math.round(Dimensions.get('window').width);
 const HEIGHT = Math.round(Dimensions.get('window').height);
-
+const defaultCategory = 'Umum';
 
 const styles = StyleSheet.create({
     stretch: {
@@ -50,7 +51,7 @@ class BookDetail extends Component {
                                    containerStyle={styles.center}
                                    placeholderContent={<ActivityIndicator/>}
                             />
-                            <Text>Kategori: {kategori.nama_kategori}</Text>
+                            <Text>Kategori: {notUndefined(kategori)? kategori.nama_kategori: defaultCategory}</Text>
                             <Text>Penerbit: {penerbit}</Text>
                             <Text>Harga: {harga}</Text>
                             <Text>Review: {review}</Text>

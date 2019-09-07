@@ -15,6 +15,8 @@ export default class NavigationHeader extends React.Component {
     render() {
         const {title, isBack, onBackPress} = this.props;
         return <Header
+            statusBarProps={{ barStyle: 'light-content' }}
+            barStyle='light-content'
             placement='center'
             leftComponent={<Button icon={<Icon name={isBack ? 'chevron-left' : 'home'} type='font-awesome'/>}
                                    onPress={notUndefined(onBackPress) ? onBackPress : this.menuButtonPress}/>}
@@ -32,5 +34,7 @@ const styles = StyleSheet.create({
         marginTop: 0,
         paddingBottom: 2,
         marginBottom: 0,
+        justifyContent: 'space-around',
+
     }
 });

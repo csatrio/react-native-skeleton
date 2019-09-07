@@ -1,15 +1,15 @@
-import {ScrollView} from 'react-native';
+import {FlatList} from 'react-native';
 import React from 'react';
+import {notUndefined, emptyFunction} from '../helpers';
 
 export default class InfiniteScrollView extends React.Component {
 
     constructor(props) {
         super(props);
         const {horizontal, scrollCb, fetchAtDifference} = props;
-        this.horizontal = typeof(horizontal) !== 'undefined' ? horizontal : false;
-        this.fetchAtDifference = typeof(fetchAtDifference) !== 'undefined' ? fetchAtDifference : 10;
-        this.scrollCb = typeof(scrollCb) !== 'undefined' ? scrollCb : () => {
-        };
+        this.horizontal = notUndefined(horizontal) ? horizontal : false;
+        this.fetchAtDifference = notUndefined(fetchAtDifference) ? fetchAtDifference : 10;
+        this.scrollCb = notUndefined(scrollCb) ? scrollCb : emptyFunction;
     }
 
     onScroll = ({nativeEvent}) => {
@@ -24,7 +24,7 @@ export default class InfiniteScrollView extends React.Component {
 
     render() {
         return (
-            <ScrollView {...this.props} onScroll={this.onScroll}>{this.props.children}</ScrollView>
+            <FlatList {...this.props} onScroll={this.onScroll}/>
         );
     }
 

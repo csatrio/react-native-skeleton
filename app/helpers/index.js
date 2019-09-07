@@ -20,3 +20,6 @@ export function pad(str, length) {
 export function notUndefined(obj) {
     return typeof(obj) !== 'undefined';
 }
+
+export function emptyFunction() {
+}
