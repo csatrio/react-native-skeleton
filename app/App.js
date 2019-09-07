@@ -7,6 +7,7 @@ import {observer, Provider} from 'mobx-react';
 import Home from './screens/home/Home';
 import Category from './screens/category/Category';
 import NewsList from './screens/news/NewsList';
+import Affiliate from './screens/affiliates/AffiliateList';
 import stores, {injectStore} from './store';
 import {notUndefined} from './helpers';
 
@@ -44,7 +45,7 @@ const TabNavigator = createBottomTabNavigator(
             }),
         },
         Affiliates: {
-            screen: Home,
+            screen: Affiliate,
             navigationOptions: (navProps) => ({
                 tabBarIcon: (props) => <TabIcon {...props} name='users' type='font-awesome'/>,
                 tabBarLabel: 'Affiliates',

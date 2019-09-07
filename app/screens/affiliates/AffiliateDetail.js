@@ -40,25 +40,26 @@ const styles = StyleSheet.create({
     },
 });
 
-class NewsDetail extends Component {
+class AffiliateDetail extends Component {
 
     render() {
-        const {judul, kata_kunci, deskripsi_pendek, isi_artikel, image} = this.props.navigation.getParam('item')
+        const {nama_toko, alamat_toko, deskripsi, image} = this.props.navigation.getParam('item')
         const coverImg = image === null || typeof(image) === 'undefined' ? react_logo : {uri: image}
         return (
             <Fragment>
                 <SafeAreaView>
                     <ScrollView>
                         <View>
-                            <View style={styles.center}><Text h4>{judul}</Text></View>
+                            <View style={styles.center}><Text h4>{nama_toko}</Text></View>
                             <Image source={coverImg}
                                    style={styles.stretch}
                                    containerStyle={styles.center}
                                    placeholderContent={<ActivityIndicator/>}
                             />
                             <View style={styles.textSection}>
-                                <Text style={styles.text}>Keyword: {kata_kunci}</Text>
-                                <Text style={{...styles.review, marginTop: 10}}>{isi_artikel}</Text>
+                                <Text style={styles.text}>Address: {alamat_toko}</Text>
+                                <Text style={{...styles.text, marginTop: 10}}>Description: </Text>
+                                <Text style={{...styles.review}}>{deskripsi}</Text>
                             </View>
                         </View>
                     </ScrollView>
@@ -68,4 +69,4 @@ class NewsDetail extends Component {
     };
 }
 
-export default NewsDetail;
+export default AffiliateDetail;

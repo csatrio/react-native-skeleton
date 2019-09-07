@@ -15,10 +15,10 @@ import react_logo from '../../assets/react-logo.png';
 import {createStackNavigator} from 'react-navigation';
 import {injectStore} from '../../store';
 import NavigationHeader from '../../navigation/NavigationHeader';
-import NewsDetail from './NewsDetail';
+import AffiliateDetail from './AffiliateDetail';
 
 
-class NewsList extends Component {
+class AffiliateList extends Component {
 
     itemPerPage = 10;
 
@@ -28,11 +28,11 @@ class NewsList extends Component {
     };
 
     componentDidMount() {
-        this.fetchNews(1);
+        this.fetchAffiliate(1);
     }
 
-    fetchNews(page) {
-        Get(`books/news/?per_page=${this.itemPerPage}&page=${page}`)
+    fetchAffiliate(page) {
+        Get(`books/affiliate/?per_page=${this.itemPerPage}&page=${page}`)
             .then(r => {
                     this.setState({
                         currentPage: r.data.current_page + 1,
@@ -49,15 +49,15 @@ class NewsList extends Component {
                 <SafeAreaView>
                     <InfiniteScrollView fetchAtDifference={10}
                                         data={this.state.items}
-                                        scrollCb={() => this.fetchNews(this.state.currentPage + 1)}
+                                        scrollCb={() => this.fetchAffiliate(this.state.currentPage + 1)}
                                         keyExtractor={(item, index)=>index.toString()}
                                         renderItem={({item, index}) => {
-                                            const {judul, deskripsi_pendek, thumbnail} = item;
+                                            const {nama_toko, deskripsi_pendek, thumbnail} = item;
                                             const coverImg = thumbnail === null || typeof(thumbnail)==='undefined' ? react_logo : {uri: thumbnail};
                                             return (
                                                 <React.Fragment>
                                                     <ListItem
-                                                        title={judul}
+                                                        title={nama_toko}
                                                         subtitle={
                                                             <React.Fragment>
                                                                 <Text>{deskripsi_pendek}</Text>
@@ -85,15 +85,15 @@ class NewsList extends Component {
 
 export default createStackNavigator({
     Home:{
-        screen: injectStore(NewsList),
+        screen: injectStore(AffiliateList),
         navigationOptions: (navProp) => ({
-            header: <NavigationHeader title='News' {...navProp}/>,
+            header: <NavigationHeader title='Affiliate' {...navProp}/>,
         }),
     },
     Detail: {
-        screen: injectStore(NewsDetail),
+        screen: injectStore(AffiliateDetail),
         navigationOptions: (navProp) => ({
-            header: <NavigationHeader title={'News Detail'} isBack={true} {...navProp}/>,
+            header: <NavigationHeader title={'Affiliate Detail'} isBack={true} {...navProp}/>,
         }),
     }
 },{initialRouteName: 'Home'});
