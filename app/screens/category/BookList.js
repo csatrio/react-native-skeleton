@@ -8,7 +8,7 @@
 
 import React, {Component, Fragment} from 'react';
 import {SafeAreaView, View} from 'react-native';
-import {ListItem, Text, Divider, Image} from 'react-native-elements';
+import {ListItem, Text, Divider} from 'react-native-elements';
 import {Get} from '../../network/index';
 import InfiniteScrollView from '../../components/InfiniteScrollView';
 import react_logo from '../../assets/react-logo.png';

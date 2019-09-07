@@ -9,7 +9,7 @@
 import React, {Component, Fragment} from 'react';
 import {SafeAreaView, ScrollView, StyleSheet, View, TouchableOpacity} from 'react-native';
 import {createStackNavigator} from 'react-navigation';
-import {Card, Image, Text, Tile, SearchBar, colors} from 'react-native-elements';
+import {Card, Image, Text, Tile, SearchBar, Icon, colors} from 'react-native-elements';
 import InfiniteScrollView from '../../components/InfiniteScrollView';
 import {NavigationHeader} from '../../navigation/index';
 import {Get} from '../../network/index';
@@ -76,10 +76,10 @@ class Home extends Component {
     searchBook = (keyword) => {
         this.setState({search: keyword, searchLoading: true}, () => {
             searchingHeader = keyword;
-            setTimeout(()=>{
+            setTimeout(() => {
                 this.props.navigation.navigate('BookList', {search: searchingHeader});
-                this.setState({searchLoading: false})
-            }, 1500)
+                this.setState({searchLoading: false});
+            }, 1500);
         });
     };
 
@@ -90,7 +90,7 @@ class Home extends Component {
 
                 <SafeAreaView>
                     <SearchBar value={this.state.search}
-                               placeholder='cari di akasa...'
+                               placeholder='search book in akasa...'
                                onChangeText={this.searchBook}
                                round={true}
                                containerStyle={{backgroundColor: colors.searchBg}}
@@ -103,12 +103,12 @@ class Home extends Component {
                             <Tile imageSrc={akasa}
                                   containerStyle={styles.bannerImage}
                                   height={Math.max(Math.round(0.23 * height()), 150)}
-                                  width={Math.round(width() * 0.96)}
+                                  width={Math.round(width() * 0.952)}
                             />
                         </View>
 
-                        <IconGrid/>
-                        <Text>{this.state.search}</Text>
+                        {/*<IconGrid/>*/}
+                        {/*<Text>{this.state.search}</Text>*/}
 
                         <View style={styles.featured}>
                             <View style={styles.sectionTextWrapper}><Text
@@ -136,11 +136,10 @@ class Home extends Component {
                                                                         style={styles.bookImage}
                                                                     />
                                                                 </View>
-                                                                <View>
-                                                                    <BookText>Judul: {nama}</BookText>
-                                                                    <BookText>Kategori: {namaKategori}</BookText>
-                                                                    <BookText>Penerbit: {penerbit}</BookText>
-                                                                    <BookText>Harga: Rp. {harga}</BookText>
+                                                                <View style={styles.justify}>
+                                                                    <BookText>Price: Rp. {harga}</BookText>
+                                                                    <BookText>Category: {namaKategori}</BookText>
+                                                                    <BookText>Publisher: {penerbit}</BookText>
                                                                 </View>
                                                             </Card>
                                                         </TouchableOpacity>
@@ -159,7 +158,7 @@ class Home extends Component {
                                                 keyExtractor={(item, index) => index.toString()}
                                                 data={articleItems}
                                                 renderItem={({item, index}) => {
-                                                    const {judul, isi_artikel} = item;
+                                                    const {judul, deskripsi_pendek} = item;
                                                     const onPress = () => {
                                                         this.props.navigation.navigate('Article', {'item': item});
                                                     };
@@ -172,9 +171,9 @@ class Home extends Component {
                                                                         style={styles.bookImage}
                                                                     />
                                                                 </View>
-                                                                <View>
-                                                                    <BookText>Judul: {judul}</BookText>
-                                                                    <BookText>Artikel: {isi_artikel}</BookText>
+                                                                <View style={styles.justify}>
+                                                                    <BookText>Title: {judul}</BookText>
+                                                                    <BookText>Description: {deskripsi_pendek}</BookText>
                                                                 </View>
                                                             </Card>
                                                         </TouchableOpacity>
@@ -213,14 +212,14 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
     },
     sectionText: {
-        fontSize: 16,
+        fontSize: 24,
         fontWeight: 'bold',
     },
     featured: {
         marginTop: 20,
     },
     article: {
-        marginTop: 20,
+        marginTop: 30,
     },
     bookImage: {
         width: 80,
@@ -236,14 +235,16 @@ const styles = StyleSheet.create({
     },
     card: {
         margin: 2,
-        width: 150,
-        height: 200,
+        width: 180,
+        height: 250,
     },
     bookText: {
         flex: 1,
         flexDirection: 'row',
     },
-
+    justify: {
+        textAlign: 'justify'
+    }
 });
 
 export default createStackNavigator({
@@ -267,8 +268,17 @@ export default createStackNavigator({
     },
     BookList: {
         screen: injectStore(BookList),
-        navigationOptions: (navProp) => ({
-            header: <NavigationHeader title={searchingHeader} isBack={true} {...navProp}/>,
-        }),
+        navigationOptions: (navProp) => {
+            const centerComponent = (
+                <React.Fragment>
+                    <Icon name='search' type='font-awesome'/>
+                    <Text>{searchingHeader}</Text>
+                </React.Fragment>
+            );
+            return ({
+                header: <NavigationHeader title={searchingHeader} centerComponent={centerComponent}
+                                          isBack={true} {...navProp}/>,
+            });
+        },
     },
 }, {initialRouteName: 'Home'});

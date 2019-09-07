@@ -13,14 +13,17 @@ export default class NavigationHeader extends React.Component {
     };
 
     render() {
-        const {title, isBack, onBackPress} = this.props;
+        const {title, isBack, onBackPress, centerComponent} = this.props;
+        const _centerComponent = notUndefined(centerComponent) ?
+            centerComponent
+            : {text: title, style: {color: '#fff'}}
         return <Header
             statusBarProps={{ barStyle: 'light-content' }}
             barStyle='light-content'
             placement='center'
             leftComponent={<Button icon={<Icon name={isBack ? 'chevron-left' : 'home'} type='font-awesome'/>}
                                    onPress={notUndefined(onBackPress) ? onBackPress : this.menuButtonPress}/>}
-            centerComponent={{text: title, style: {color: '#fff'}}}
+            centerComponent={_centerComponent}
             rightComponent={{icon: 'home', color: '#fff'}}
             containerStyle={styles.container}
         />;
