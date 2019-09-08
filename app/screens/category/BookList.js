@@ -24,6 +24,7 @@ class BookList extends Component {
         items: [],
         link: '',
         loading: false,
+        refreshing: false,
     };
 
     componentDidMount() {
@@ -34,8 +35,8 @@ class BookList extends Component {
         this.fetchList(this.keyword, 1);
     }
 
-    fetchList(keyword, page) {
-        this.setState({loading: true});
+    fetchList(keyword, page, isRefresh = false) {
+        this.setState({loading: true, refreshing: isRefresh});
         const url = this.is_kategori ?
             `books/buku/?per_page=${this.itemPerPage}&page=${page}&kategori__nama_kategori=${keyword}` :
             `books/buku/?per_page=${this.itemPerPage}&page=${page}&nama=${keyword}`;
@@ -46,6 +47,7 @@ class BookList extends Component {
                         items: page === 1 ? r.data.rows : this.state.items.concat(r.data.rows),
                         link: url,
                         loading: false,
+                        refreshing: false,
                     });
                 },
             );
@@ -61,6 +63,8 @@ class BookList extends Component {
                                         scrollCb={() => this.fetchList(this.keyword, this.state.currentBookPage + 1)}
                                         keyExtractor={(item, index) => index.toString()}
                                         loading={this.state.loading}
+                                        onRefresh={() => this.fetchList(this.keyword, 1, true)}
+                                        refreshing={this.state.refreshing}
                                         renderItem={({item, index}) => {
                                             const {kategori, nama, penerbit, harga, cover} = item;
                                             const coverImg = cover === null ? react_logo : {uri: cover};

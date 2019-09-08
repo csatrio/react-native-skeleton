@@ -1,19 +1,21 @@
-import {FlatList, ActivityIndicator} from 'react-native';
+import {FlatList, RefreshControl, ActivityIndicator} from 'react-native';
 import React from 'react';
 import {emptyFunction, notUndefined} from '../helpers';
 
 export default class InfiniteScrollView extends React.Component {
 
     static defaultProps = {
-        loading: false
+        loading: false,
+        refreshing: false
     }
 
     constructor(props) {
         super(props);
-        const {horizontal, scrollCb, fetchAtDifference} = props;
+        const {horizontal, scrollCb, fetchAtDifference, onRefresh} = props;
         this.horizontal = notUndefined(horizontal) ? horizontal : false;
         this.fetchAtDifference = notUndefined(fetchAtDifference) ? fetchAtDifference : 10;
         this.scrollCb = notUndefined(scrollCb) ? scrollCb : emptyFunction;
+        this.onRefresh = notUndefined(onRefresh) ? onRefresh : emptyFunction;
     }
 
     onScroll = ({nativeEvent}) => {
@@ -26,11 +28,21 @@ export default class InfiniteScrollView extends React.Component {
         }
     };
 
+    refreshControl = ()=>{
+        return (
+            <RefreshControl refreshing={this.props.refreshing}/>
+        )
+    }
+
     render() {
         return (
             <React.Fragment>
                 <ActivityIndicator animating={this.props.loading}/>
-                <FlatList {...this.props} onScroll={this.onScroll}/>
+                <FlatList {...this.props}
+                          onScroll={this.onScroll}
+                          refreshControl={this.refreshControl()}
+                          onRefresh={this.onRefresh}
+                />
             </React.Fragment>
         );
     }

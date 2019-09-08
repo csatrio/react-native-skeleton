@@ -26,20 +26,22 @@ class NewsList extends Component {
         currentPage: 1,
         items: [],
         loading: false,
+        refreshing: false,
     };
 
     componentDidMount() {
         this.fetchNews(1);
     }
 
-    fetchNews = (page) => {
-        this.setState({loading: true});
+    fetchNews = (page, isRefresh=false) => {
+        this.setState({loading: true, refreshing: isRefresh});
         Get(`books/news/?per_page=${this.itemPerPage}&page=${page}`)
             .then(r => {
                     this.setState({
                         currentPage: r.data.current_page + 1,
                         items: page === 1 ? r.data.rows : this.state.items.concat(r.data.rows),
                         loading: false,
+                        refreshing: false,
                     });
                 },
             );
@@ -55,6 +57,8 @@ class NewsList extends Component {
                                         scrollCb={() => this.fetchNews(this.state.currentPage + 1)}
                                         keyExtractor={(item, index) => index.toString()}
                                         loading={this.state.loading}
+                                        onRefresh={() => this.fetchList(1, true)}
+                                        refreshing={this.state.refreshing}
                                         renderItem={({item, index}) => {
                                             const {judul, deskripsi_pendek, thumbnail} = item;
                                             const coverImg = thumbnail === null || typeof(thumbnail) === 'undefined' ? react_logo : {uri: thumbnail};
