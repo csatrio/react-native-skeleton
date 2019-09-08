@@ -53,7 +53,7 @@ class Home extends Component {
         Get(`books/buku/?per_page=${this.itemPerPage}&page=${page}`)
             .then(r => {
                     this.setState({
-                        currentPage: r.data.current_page,
+                        currentBookPage: r.data.current_page,
                         featuredItems: this.state.featuredItems.concat(r.data.rows),
                     });
                 },
@@ -82,7 +82,7 @@ class Home extends Component {
     };
 
     render() {
-        const {search, searchLoading, featuredItems, articleItems, currentArticlePage, currentBookPage} = this.state;
+        const {searchLoading, featuredItems, articleItems} = this.state;
         return (
             <Fragment>
 
@@ -105,14 +105,11 @@ class Home extends Component {
                             />
                         </View>
 
-                        {/*<IconGrid/>*/}
-                        {/*<Text>{this.state.search}</Text>*/}
-
                         <View style={styles.featured}>
                             <View style={styles.sectionTextWrapper}><Text
                                 style={styles.sectionText}>Featured</Text></View>
                             <InfiniteScrollView fetchAtDifference={10}
-                                                scrollCb={() => this.fetchBook(currentBookPage + 1)}
+                                                scrollCb={() => this.fetchBook(this.state.currentBookPage + 1)}
                                                 horizontal={true}
                                                 keyExtractor={(item, index) => index.toString()}
                                                 data={featuredItems}
@@ -151,7 +148,7 @@ class Home extends Component {
                             <View style={styles.sectionTextWrapper}><Text
                                 style={styles.sectionText}>Article</Text></View>
                             <InfiniteScrollView fetchAtDifference={10}
-                                                scrollCb={() => this.fetchArticle(currentArticlePage + 1)}
+                                                scrollCb={() => this.fetchArticle(this.state.currentArticlePage + 1)}
                                                 horizontal={true}
                                                 keyExtractor={(item, index) => index.toString()}
                                                 data={articleItems}
@@ -243,8 +240,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     justify: {
-        textAlign: 'justify'
-    }
+        textAlign: 'justify',
+    },
 });
 
 export default createStackNavigator({
