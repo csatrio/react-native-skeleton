@@ -41,6 +41,8 @@ class Home extends Component {
         currentArticlePage: 1,
         search: '',
         searchLoading: false,
+        bookLoading: false,
+        articleLoading: false,
     };
 
 
@@ -50,22 +52,26 @@ class Home extends Component {
     }
 
     fetchBook = (page = this.state.currentBookPage) => {
+        this.setState({bookLoading: true})
         Get(`books/buku/?per_page=${this.itemPerPage}&page=${page}`)
             .then(r => {
                     this.setState({
                         currentBookPage: r.data.current_page,
                         featuredItems: this.state.featuredItems.concat(r.data.rows),
+                        bookLoading: false
                     });
                 },
             );
     };
 
     fetchArticle = (page = this.state.currentArticlePage) => {
+        this.setState({articleLoading: true})
         Get(`books/article/?per_page=${this.itemPerPage}&page=${page}`)
             .then(r => {
                     this.setState({
                         currentArticlePage: r.data.current_page,
                         articleItems: this.state.articleItems.concat(r.data.rows),
+                        articleLoading: false
                     });
                 },
             );
@@ -113,6 +119,7 @@ class Home extends Component {
                                                 horizontal={true}
                                                 keyExtractor={(item, index) => index.toString()}
                                                 data={featuredItems}
+                                                loading={this.state.bookLoading}
                                                 renderItem={({item, index}) => {
                                                     const {kategori, nama, penerbit, harga, cover} = item;
                                                     const namaKategori = notUndefined(kategori) ?
@@ -152,6 +159,7 @@ class Home extends Component {
                                                 horizontal={true}
                                                 keyExtractor={(item, index) => index.toString()}
                                                 data={articleItems}
+                                                loading={this.state.articleLoading}
                                                 renderItem={({item, index}) => {
                                                     const {judul, deskripsi_pendek, thumbnail} = item;
                                                     const onPress = () => {

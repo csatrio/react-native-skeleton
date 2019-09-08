@@ -22,27 +22,30 @@ class BookList extends Component {
     state = {
         currentBookPage: 1,
         items: [],
-        link: ''
+        link: '',
+        loading: false,
     };
 
     componentDidMount() {
-        const {navigation} = this.props
-        this.is_kategori = notUndefined(navigation.getParam('nama_kategori')) ? true: false;
+        const {navigation} = this.props;
+        this.is_kategori = notUndefined(navigation.getParam('nama_kategori')) ? true : false;
         this.keyword = notUndefined(navigation.getParam('nama_kategori')) ? navigation.getParam('nama_kategori')
-            : navigation.getParam('search')
-        this.fetchDetail(this.keyword, 1);
+            : navigation.getParam('search');
+        this.fetchList(this.keyword, 1);
     }
 
-    fetchDetail(keyword, page) {
+    fetchList(keyword, page) {
+        this.setState({loading: true});
         const url = this.is_kategori ?
-            `books/buku/?per_page=${this.itemPerPage}&page=${page}&kategori__nama_kategori=${keyword}`:
+            `books/buku/?per_page=${this.itemPerPage}&page=${page}&kategori__nama_kategori=${keyword}` :
             `books/buku/?per_page=${this.itemPerPage}&page=${page}&nama=${keyword}`;
         Get(url)
             .then(r => {
                     this.setState({
                         currentPage: r.data.current_page + 1,
                         items: page === 1 ? r.data.rows : this.state.items.concat(r.data.rows),
-                        link: url
+                        link: url,
+                        loading: false,
                     });
                 },
             );
@@ -53,11 +56,11 @@ class BookList extends Component {
         return (
             <Fragment>
                 <SafeAreaView>
-                    {/*<Text>{this.state.link}</Text>*/}
                     <InfiniteScrollView fetchAtDifference={10}
                                         data={this.state.items}
-                                        scrollCb={() => this.fetchDetail(this.keyword, this.state.currentBookPage + 1)}
-                                        keyExtractor={(item, index)=>index.toString()}
+                                        scrollCb={() => this.fetchList(this.keyword, this.state.currentBookPage + 1)}
+                                        keyExtractor={(item, index) => index.toString()}
+                                        loading={this.state.loading}
                                         renderItem={({item, index}) => {
                                             const {kategori, nama, penerbit, harga, cover} = item;
                                             const coverImg = cover === null ? react_logo : {uri: cover};

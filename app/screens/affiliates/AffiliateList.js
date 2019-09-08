@@ -25,18 +25,21 @@ class AffiliateList extends Component {
     state = {
         currentPage: 1,
         items: [],
+        loading: false,
     };
 
     componentDidMount() {
         this.fetchAffiliate(1);
     }
 
-    fetchAffiliate(page) {
+    fetchAffiliate = (page) => {
+        this.setState({loading:true})
         Get(`books/affiliate/?per_page=${this.itemPerPage}&page=${page}`)
             .then(r => {
                     this.setState({
                         currentPage: r.data.current_page + 1,
                         items: page === 1 ? r.data.rows : this.state.items.concat(r.data.rows),
+                        loading: false,
                     });
                 },
             );
@@ -51,6 +54,7 @@ class AffiliateList extends Component {
                                         data={this.state.items}
                                         scrollCb={() => this.fetchAffiliate(this.state.currentPage + 1)}
                                         keyExtractor={(item, index)=>index.toString()}
+                                        loading={this.state.loading}
                                         renderItem={({item, index}) => {
                                             const {nama_toko, deskripsi_pendek, thumbnail} = item;
                                             const coverImg = thumbnail === null || typeof(thumbnail)==='undefined' ? react_logo : {uri: thumbnail};

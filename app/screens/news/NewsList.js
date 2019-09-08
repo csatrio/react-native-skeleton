@@ -25,22 +25,25 @@ class NewsList extends Component {
     state = {
         currentPage: 1,
         items: [],
+        loading: false,
     };
 
     componentDidMount() {
         this.fetchNews(1);
     }
 
-    fetchNews(page) {
+    fetchNews = (page) => {
+        this.setState({loading: true});
         Get(`books/news/?per_page=${this.itemPerPage}&page=${page}`)
             .then(r => {
                     this.setState({
                         currentPage: r.data.current_page + 1,
                         items: page === 1 ? r.data.rows : this.state.items.concat(r.data.rows),
+                        loading: false,
                     });
                 },
             );
-    }
+    };
 
 
     render() {
@@ -50,10 +53,11 @@ class NewsList extends Component {
                     <InfiniteScrollView fetchAtDifference={10}
                                         data={this.state.items}
                                         scrollCb={() => this.fetchNews(this.state.currentPage + 1)}
-                                        keyExtractor={(item, index)=>index.toString()}
+                                        keyExtractor={(item, index) => index.toString()}
+                                        loading={this.state.loading}
                                         renderItem={({item, index}) => {
                                             const {judul, deskripsi_pendek, thumbnail} = item;
-                                            const coverImg = thumbnail === null || typeof(thumbnail)==='undefined' ? react_logo : {uri: thumbnail};
+                                            const coverImg = thumbnail === null || typeof(thumbnail) === 'undefined' ? react_logo : {uri: thumbnail};
                                             return (
                                                 <React.Fragment>
                                                     <ListItem
@@ -84,7 +88,7 @@ class NewsList extends Component {
 }
 
 export default createStackNavigator({
-    Home:{
+    Home: {
         screen: injectStore(NewsList),
         navigationOptions: (navProp) => ({
             header: <NavigationHeader title='News' {...navProp}/>,
@@ -95,5 +99,5 @@ export default createStackNavigator({
         navigationOptions: (navProp) => ({
             header: <NavigationHeader title={'News Detail'} isBack={true} {...navProp}/>,
         }),
-    }
-},{initialRouteName: 'Home'});
+    },
+}, {initialRouteName: 'Home'});
