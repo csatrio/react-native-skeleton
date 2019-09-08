@@ -1,8 +1,12 @@
-import {FlatList} from 'react-native';
+import {FlatList, ActivityIndicator} from 'react-native';
 import React from 'react';
 import {emptyFunction, notUndefined} from '../helpers';
 
 export default class InfiniteScrollView extends React.Component {
+
+    static defaultProps = {
+        loading: false
+    }
 
     constructor(props) {
         super(props);
@@ -24,7 +28,10 @@ export default class InfiniteScrollView extends React.Component {
 
     render() {
         return (
-            <FlatList {...this.props} onScroll={this.onScroll}/>
+            <React.Fragment>
+                <ActivityIndicator animating={this.props.loading}/>
+                <FlatList {...this.props} onScroll={this.onScroll}/>
+            </React.Fragment>
         );
     }
 
