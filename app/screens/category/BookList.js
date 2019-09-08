@@ -17,7 +17,7 @@ import {notUndefined} from '../../helpers';
 
 class BookList extends Component {
 
-    itemPerPage = 10;
+    itemPerPage = 20;
 
     state = {
         currentBookPage: 1,
@@ -43,7 +43,7 @@ class BookList extends Component {
         Get(url)
             .then(r => {
                     this.setState({
-                        currentPage: r.data.current_page + 1,
+                        currentBookPage: r.data.current_page,
                         items: page === 1 ? r.data.rows : this.state.items.concat(r.data.rows),
                         link: url,
                         loading: false,

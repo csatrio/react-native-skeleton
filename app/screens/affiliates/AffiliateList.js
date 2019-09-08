@@ -20,7 +20,7 @@ import AffiliateDetail from './AffiliateDetail';
 
 class AffiliateList extends Component {
 
-    itemPerPage = 10;
+    itemPerPage = 20;
 
     state = {
         currentPage: 1,
@@ -38,7 +38,7 @@ class AffiliateList extends Component {
         Get(`books/affiliate/?per_page=${this.itemPerPage}&page=${page}`)
             .then(r => {
                     this.setState({
-                        currentPage: r.data.current_page + 1,
+                        currentPage: r.data.current_page,
                         items: page === 1 ? r.data.rows : this.state.items.concat(r.data.rows),
                         loading: false,
                         refreshing: false,
